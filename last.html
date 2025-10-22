@@ -1,0 +1,282 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Bhai Dooj - To My Lovely Sister</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&family=Quicksand:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1.2s ease-out forwards;
+        }
+        
+        .fade-in-image {
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInImage 1.5s ease-out forwards;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInImage {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .delay-1 {
+            animation-delay: 1.8s;
+        }
+        
+        .delay-2 {
+            animation-delay: 3.2s;
+        }
+        
+        /* Floating Hearts Animation */
+        .heart-rain {
+            position: fixed;
+            top: -50px;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.6;
+        }
+        
+        .heart-fall {
+            animation: fall linear infinite;
+        }
+        
+        @keyframes fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 0.8;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Custom text styling */
+        .elegant-text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+            line-height: 1.6;
+        }
+        
+        .heart-pulse {
+            animation: heartPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes heartPulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+        
+        /* Pink heading styling */
+        .pink-heading {
+            background: linear-gradient(135deg, #ec4899, #f472b6, #fb7185);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 500;
+            text-shadow: 0 2px 4px rgba(236, 72, 153, 0.2);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .pink-heading {
+                font-size: 2rem !important;
+            }
+            .elegant-text {
+                font-size: 1rem !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-white min-h-screen flex flex-col items-center justify-center relative">
+    
+    <!-- Floating Hearts Background Animation -->
+    <div id="heartRain" class="fixed inset-0 pointer-events-none z-0"></div>
+    
+    <!-- Main Content Container -->
+    <div class="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-6">
+        
+        <!-- Pink Heading -->
+        <div class="mb-6 md:mb-8 fade-in-up">
+            <h1 class="pink-heading text-2xl md:text-3xl lg:text-4xl text-center font-bold tracking-wider">
+                Happy Bhai Dooj 🪔
+            </h1>
+        </div>
+        
+        <!-- Image Container -->
+        <div class="mb-6 md:mb-8">
+            <img 
+                id="anniversaryImage" 
+                src="./last.jpg" 
+                alt="Bhai Dooj Celebration" 
+                class="fade-in-image w-48 h-48 md:w-64 md:h-64 lg:w-72 lg:h-72 object-cover rounded-2xl shadow-2xl"
+            >
+        </div>
+        
+        <!-- Text Lines Container -->
+        <div class="text-center space-y-3 md:space-y-4 max-w-xs md:max-w-sm">
+            
+            <!-- Line 1 -->
+            <div class="fade-in-up delay-1">
+                <p class="elegant-text text-base md:text-lg lg:text-xl text-gray-700">
+                    To the most amazing sister in the world...
+                </p>
+            </div>
+            
+            <!-- Line 2 -->
+            <div class="fade-in-up delay-2">
+                <p class="elegant-text font-medium text-xl md:text-2xl lg:text-3xl text-red-600 flex items-center justify-center gap-2" style="margin-top: 1rem; font-weight: 500;">
+                    My Guardian Angel ❤️
+                    
+                </p>
+            </div>
+            
+        </div>
+        
+    </div>
+    <audio id="bgMusic" loop>
+  <source src="romantic1.mp3" type="audio/mpeg">
+</audio>
+
+    <script>
+        let musicStarted = false;
+
+function startMusic() {
+  if (musicStarted) return;
+
+  const bgMusic = document.getElementById("bgMusic");
+  if (bgMusic) {
+    bgMusic.volume = 0.5;
+    bgMusic.play().then(() => {
+      musicStarted = true;
+      console.log("Music started");
+    }).catch((err) => {
+      console.warn("Music autoplay blocked:", err);
+    });
+  }
+}
+
+document.body.addEventListener("click", startMusic, { once: true });
+document.body.addEventListener("touchstart", startMusic, { once: true });
+
+        // Floating Hearts Animation
+        function createHeartRain() {
+            const heartRainContainer = document.getElementById('heartRain');
+            
+            // Create Star elements for Bhai Dooj theme
+            function createStar() {
+                const star = document.createElement('div');
+                star.innerHTML = '✨';
+                star.style.fontSize = Math.random() * 14 + 12 + 'px'; // 12-26px size
+                star.style.color = Math.random() > 0.5 ? '#f59e0b' : '#fcd34d'; // Golden colors
+                star.style.opacity = '0.8';
+                return star;
+            }
+            
+            function createFallingHeart() {
+                const starElement = document.createElement('div');
+                starElement.className = 'heart-rain heart-fall';
+                starElement.appendChild(createStar());
+                
+                // Random horizontal position
+                starElement.style.left = Math.random() * 100 + 'vw';
+                
+                // Random animation duration between 6-12 seconds (slightly faster)
+                const duration = Math.random() * 6 + 6;
+                starElement.style.animationDuration = duration + 's';
+                
+                // Random delay
+                starElement.style.animationDelay = Math.random() * 1.5 + 's';
+                
+                heartRainContainer.appendChild(starElement);
+                
+                // Remove element after animation completes
+                setTimeout(() => {
+                    if (starElement.parentNode) {
+                        starElement.parentNode.removeChild(starElement);
+                    }
+                }, (duration + 2) * 1000);
+            }
+            
+            // Create initial stars
+            for (let i = 0; i < 6; i++) {
+                setTimeout(createFallingHeart, i * 600);
+            }
+            
+            // Continue creating stars every 2.5 seconds
+            setInterval(createFallingHeart, 2500);
+        }
+        
+        // Error handling for image loading
+        document.getElementById('anniversaryImage').addEventListener('error', function() {
+            // If image fails to load, create a placeholder with Bhai Dooj design
+            this.style.display = 'none';
+            const placeholder = document.createElement('div');
+            placeholder.className = 'fade-in-image w-48 h-48 md:w-64 md:h-64 lg:w-72 lg:h-72 bg-gradient-to-br from-yellow-100 to-amber-200 rounded-2xl shadow-2xl flex items-center justify-center';
+            placeholder.innerHTML = `
+                <div class="text-center">
+                    <div class="text-5xl mb-2">🪔</div>
+                    <p class="text-gray-600 elegant-text">Bhai Dooj</p>
+                </div>
+            `;
+            this.parentNode.appendChild(placeholder);
+        });
+        
+        // Initialize animations when page loads
+        window.addEventListener('load', function() {
+            // Start floating animation after a short delay
+            setTimeout(createHeartRain, 1000);
+        });
+        
+        // Add subtle parallax effect on scroll (optional enhancement)
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const heartElements = document.querySelectorAll('.heart-rain');
+            heartElements.forEach(heart => {
+                heart.style.transform = `translateY(${scrolled * 0.2}px)`;
+            });
+        });
+    </script>
+
+</body>
+</html>

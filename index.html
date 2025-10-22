@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bhai Dooj Envelope</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: url('back.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Quicksand', sans-serif;
+            min-height: 100vh;
+            /* allow normal scrolling on small screens */
+            overflow: auto;
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .envelope-wrapper {
+            perspective: 1000px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .envelope {
+            position: relative;
+            width: min(420px, 85vw);
+            height: min(280px, 55vw);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .envelope-base {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            background-image: linear-gradient(white, white), 
+                            linear-gradient(135deg, #ff6b9d, #a855f7);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            border: 2px solid transparent;
+        }
+
+        .envelope-base::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(0,0,0,0.05) 100%);
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        /* Dashed border effect */
+        .envelope-border {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 2px dashed #e5e5e5;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: #ffffff;
+            transform-origin: top center;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 16px 16px 0 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .envelope-flap::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-left: min(200px, 45vw) solid transparent;
+            border-right: min(200px, 45vw) solid transparent;
+            border-top: min(130px, 29vw) solid #ffb3d1;
+            transform: translateX(-50%);
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .envelope-flap-shadow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, transparent 100%);
+            clip-path: polygon(0 0, 50% 100%, 100% 0);
+        }
+
+        .heart-seal {
+            position: absolute;
+            top: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 32px;
+            z-index: 10;
+            filter: drop-shadow(0 4px 8px rgba(220, 38, 38, 0.3));
+            transition: transform 0.3s;
+        }
+
+        .heart-seal:hover {
+            transform: translateX(-50%) scale(1.1);
+        }
+
+        .letter {
+            position: absolute;
+            /* place inside the envelope container so it centers with envelope */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, 120%);
+            width: min(380px, 86vw);
+            max-width: 520px;
+            height: auto;
+            background: linear-gradient(135deg, #fff9f9 0%, #fffafa 100%);
+            border-radius: min(20px, 5vw);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.45s ease-in-out;
+            padding: min(26px, 4vw);
+            z-index: 100;
+            background-image: linear-gradient(white, white), 
+                            linear-gradient(135deg, #ff6b9d, #a855f7);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            border: 2px solid transparent;
+            backdrop-filter: blur(6px);
+        }
+
+        .letter::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: min(6px, 1.5vw);
+            background: linear-gradient(90deg, #ff6b9d 0%, #a855f7 50%, #ff6b9d 100%);
+            border-radius: min(20px, 5vw) min(20px, 5vw) 0 0;
+            background-size: 200% 200%;
+            animation: gradient 3s linear infinite;
+        }
+
+        @keyframes buttonGlow {
+            0%, 100% { box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3); }
+            50% { box-shadow: 0 8px 25px rgba(255, 107, 157, 0.5); }
+        }
+
+        .next-page-btn {
+            background: linear-gradient(135deg, #ff6b9d 0%, #a855f7 100%);
+            padding: clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2rem);
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: clamp(1.25rem, 3vw, 2rem);
+            display: inline-block;
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            text-decoration: none;
+            position: relative;
+            animation: buttonGlow 2s ease-in-out infinite;
+        }
+        
+        .next-page-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(255, 107, 157, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .envelope.open .envelope-flap {
+            transform: rotateX(-180deg);
+        }
+
+        .envelope.open .letter {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            z-index: 110;
+        }
+
+        .envelope.open .envelope-base,
+        .envelope.open .envelope-flap,
+        .envelope.open .heart-seal {
+            display: none;
+        }
+
+        .envelope.open .heart-seal {
+            opacity: 0;
+            transform: translateX(-50%) scale(0.5);
+        }
+
+        @keyframes gradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .letter-content {
+            text-align: center;
+            color: #4a4a4a;
+        }
+
+        .letter-title {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, #ff6b9d 0%, #a855f7 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: min(15px, 4vw);
+            text-shadow: 1px 1px 2px rgba(214, 51, 132, 0.1);
+        }
+
+        .letter-text {
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            line-height: 1.8;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .decorative-element {
+            position: absolute;
+            opacity: 0.15;
+        }
+
+        .decorative-element.top-left {
+            top: min(10px, 2.5vw);
+            left: min(10px, 2.5vw);
+            font-size: min(20px, 5vw);
+        }
+
+        .decorative-element.top-right {
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+        }
+
+        .decorative-element.bottom-left {
+            bottom: 10px;
+            left: 10px;
+            font-size: 20px;
+        }
+
+        .decorative-element.bottom-right {
+            bottom: 10px;
+            right: 10px;
+            font-size: 20px;
+        }
+
+        .action-button {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff8fab 100%);
+            transition: all 0.3s;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 157, 0.3);
+        }
+
+        /* Removed diagonal lines */
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Responsive tweaks for tablet and desktop */
+        @media (min-width: 768px) {
+            body {
+                padding: 4rem;
+            }
+
+            .envelope {
+                width: min(480px, 50vw);
+                height: min(320px, 36vw);
+            }
+
+            .letter {
+                width: min(520px, 44vw);
+                padding: 32px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .envelope-wrapper {
+                max-width: 1100px;
+            }
+
+            .envelope {
+                width: 520px;
+                height: 340px;
+            }
+
+            .letter {
+                width: 520px;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="text-center">
+    <h1 class="text-4xl md:text-5xl font-bold mb-2" style="background: linear-gradient(135deg, #ff6b9d 0%, #a855f7 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Happy Bhai Dooj ❤️</h1>
+    <p class="text-gray-600 mb-8 text-sm md:text-base" id="subheading">Click the envelope to open your special message 💝</p>
+        
+        <div class="envelope-wrapper floating">
+            <div class="envelope" id="envelope">
+                <!-- Base envelope -->
+                <div class="envelope-base">
+                    <div class="envelope-border"></div>
+                    
+                    <!-- Decorative corners -->
+                    <div class="decorative-element top-left">✦</div>
+                    <div class="decorative-element top-right">✦</div>
+                    <div class="decorative-element bottom-left">✦</div>
+                    <div class="decorative-element bottom-right">✦</div>
+                </div>
+
+                <!-- Flap -->
+                <div class="envelope-flap">
+                    <div class="envelope-flap-shadow"></div>
+                </div>
+
+                <!-- Heart seal -->
+                <div class="heart-seal">❤️</div>
+
+                <!-- Letter inside -->
+                <div class="letter">
+                    <div class="letter-content">
+                        <div class="letter-title">Bhai Dooj Wishes ❤️</div>
+                        <div class="letter-text">
+                            <p class="mb-3">Dear Sister, 🌟</p>
+                            <p class="mb-3">On this auspicious day of Bhai Dooj, I pray for your happiness, success, and prosperity. May our bond grow stronger with each passing day. 💫</p>
+                            <p class="font-semibold" style="background: linear-gradient(135deg, #ff6b9d 0%, #a855f7 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">With love and best wishes! 💝</p>
+                        </div>
+                        <a href="next.html" class="next-page-btn">Continue to Next Page →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button id="toggleBtn" class="action-button mt-12 px-8 py-3 text-white rounded-full font-semibold shadow-lg">
+            Open Envelope
+        </button>
+    </div>
+
+    <script>
+        const envelope = document.getElementById('envelope');
+        const toggleBtn = document.getElementById('toggleBtn');
+        const heading = document.querySelector('h1');
+        const subheading = document.getElementById('subheading');
+        let isOpen = false;
+
+        function toggleEnvelope() {
+            if (!isOpen) {
+                isOpen = true;
+                envelope.classList.add('open');
+                toggleBtn.style.opacity = '0';
+                heading.style.opacity = '0';
+                subheading.style.opacity = '0';
+                setTimeout(() => {
+                    toggleBtn.style.display = 'none';
+                    heading.style.display = 'none';
+                    subheading.style.display = 'none';
+                }, 300);
+            }
+        }
+
+        toggleBtn.addEventListener('click', toggleEnvelope);
+        envelope.addEventListener('click', toggleEnvelope);
+    </script>
+</body>
+</html>
